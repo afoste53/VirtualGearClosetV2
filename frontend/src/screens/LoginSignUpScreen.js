@@ -68,6 +68,7 @@ const LoginSignUpScreen = ({ history }) => {
     setUser({
       firstName: "John",
       lastName: "Doe",
+      closets: [],
     });
     history.push("/");
   };
@@ -146,60 +147,62 @@ const LoginSignUpScreen = ({ history }) => {
       </Modal>
 
       <Container className="my-3 d-flex">
-        <Col md={6} className="d-flex align-items-center">
-          <Container>
-            <Row>
-              <h1 className="text-info">Virtual Gear Closet</h1>
-            </Row>
-            <Row className="px-3">
-              <h2 className="h5">Organize. Plan. Share.</h2>
-            </Row>
-          </Container>
-        </Col>
-        <Col className="my-5">
-          <Card className="my-5 p-3 loginCard">
-            <Card.Body>
-              <Form>
-                <Form.Group className="mb-3">
-                  <Form.Label>Email Address</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeHolder="Email"
-                    name="email"
-                    value={email}
-                    onChange={handleInputChange}
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeHolder="Password"
-                    name="password"
-                    value={password}
-                    onChange={handleInputChange}
-                  />
-                </Form.Group>
+        <Row className="d-flex justify-content-center">
+          <Col xs={12} lg={6} xl={7} className="d-flex align-items-center">
+            <Container>
+              <Row>
+                <h1 className="text-info">Virtual Gear Closet</h1>
+              </Row>
+              <Row className="px-xl-3">
+                <h2 className="h5">Organize. Plan. Share.</h2>
+              </Row>
+            </Container>
+          </Col>
+          <Col xs={12} lg={5} xl={4} className="my-5">
+            <Card className="my-lg-5 p-3 loginCard">
+              <Card.Body>
+                <Form>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Email Address</Form.Label>
+                    <Form.Control
+                      type="email"
+                      placeHolder="Email"
+                      name="email"
+                      value={email}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                      type="password"
+                      placeHolder="Password"
+                      name="password"
+                      value={password}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Group>
+                  <Row className="d-flex align-content-center">
+                    <Button size="lg" variant="success" onClick={handleLogin}>
+                      Login
+                    </Button>
+                  </Row>
+                </Form>
+              </Card.Body>
+              <Card.Footer className="blankFooter">
                 <Row className="d-flex align-content-center">
-                  <Button size="lg" variant="success" onClick={handleLogin}>
-                    Login
+                  <Button
+                    size="lg"
+                    variant="info"
+                    onClick={(e) => setHasAccount(false)}
+                  >
+                    Don't have an account?
                   </Button>
                 </Row>
-              </Form>
-            </Card.Body>
-            <Card.Footer className="blankFooter">
-              <Row className="d-flex align-content-center">
-                <Button
-                  size="lg"
-                  variant="info"
-                  onClick={(e) => setHasAccount(false)}
-                >
-                  Don't have an account?
-                </Button>
-              </Row>
-            </Card.Footer>
-          </Card>
-        </Col>
+              </Card.Footer>
+            </Card>
+          </Col>
+        </Row>
       </Container>
     </>
   );

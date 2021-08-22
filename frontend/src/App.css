@@ -1,7 +1,6 @@
 body{
   width: 100%;
   height: 100%;
-  background: rgba(75,156,211, 0.1);
   margin: 0px;
 }
 
@@ -18,16 +17,25 @@ body{
 }
 
 .loginSignUpContainer {
-height: 100vh;
+  height: 100vh;
 }
 
 .loginCard{
-  width: 40vw;
-  box-shadow: 5px 5px rgba(0,0,0, 0.2);
+  width: 450px;
+  border: 1px solid black;
+  box-shadow: 6px 6px rgba(0,0,0, 0.2);
   border-radius: 25px;
 }
 
 #registerModal {
   border-radius: 10px;
   box-shadow: 7px 7px rgba(0,0,0,0.2);
+}
+
+#newUserDialog {
+  height: 250px;
+  width: 60%;
+  background: rgba(211,211,211, 0.5);
+  box-shadow: 5px 5px rgba(0,0,0,0.2);
+  border-radius: 15px;
 }
