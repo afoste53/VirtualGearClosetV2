@@ -2,26 +2,32 @@ body{
   width: 100%;
   height: 100%;
   background: rgba(75,156,211, 0.1);
+  margin: 0px;
+}
+
+.bg-light-blue {
+  background: rgba(75, 156, 211, 0.2);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.blankFooter {
+  background: #fff;
 }
 
 .loginSignUpContainer {
 height: 100vh;
 }
 
-.loginCard, .signUpCard {
+.loginCard{
   width: 40vw;
   box-shadow: 5px 5px rgba(0,0,0, 0.2);
   border-radius: 25px;
 }
 
-.loginCard{
-  width: 40vw;
-}
-
-.signUpCard {
-width: 40vw
-}
-
-.blankFooter {
-  background: #fff;
+#registerModal {
+  border-radius: 10px;
+  box-shadow: 7px 7px rgba(0,0,0,0.2);
 }

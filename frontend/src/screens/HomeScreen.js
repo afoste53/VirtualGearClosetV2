@@ -1,6 +1,7 @@
 import { useContext, useEffect } from "react";
 import UserContext from "../UserContext";
 import Header from "../components/Header";
+import { Container } from "react-bootstrap";
 
 const HomeScreen = ({ history }) => {
   const { user } = useContext(UserContext);
@@ -12,10 +13,9 @@ const HomeScreen = ({ history }) => {
   }, [user]);
 
   return (
-    <>
-      <Header />
+    <Container className="m-0">
       <h2>homescreen</h2>
-    </>
+    </Container>
   );
 };
 
