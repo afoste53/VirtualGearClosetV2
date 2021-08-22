@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import UserContext from "../UserContext";
 
 const LoginSignUpScreen = () => {
@@ -26,74 +26,107 @@ const LoginSignUpScreen = () => {
   };
 
   return (
-    <Container className="my-3">
+    <Container className="my-3 d-flex">
+      <Col md={7} className="d-flex align-content-center">
+        <Container className="d-flex">
+          <h1>Virtual Gear Closet</h1>
+        </Container>
+      </Col>
       {hasAccount ? (
-        <Container>
-          <h2>Log in</h2>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Email Address</Form.Label>
-              <Form.Control
-                type="email"
-                placeHolder="Email"
-                name="email"
-                value={email}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeHolder="Password"
-                name="password"
-                value={password}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-            <Button>Login</Button>
-          </Form>
-        </Container>
+        <Card md={5} className="mt-5 p-3 loginCard">
+          <Card.Title>
+            <h2>Log in</h2>
+          </Card.Title>
+          <Card.Body>
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label>Email Address</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeHolder="Email"
+                  name="email"
+                  value={email}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeHolder="Password"
+                  name="password"
+                  value={password}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+              <Row className="d-flex align-content-center">
+                <Button size="lg" variant="success">
+                  Login
+                </Button>
+              </Row>
+            </Form>
+          </Card.Body>
+          <Card.Footer className="blankFooter">
+            <Row className="d-flex align-content-center">
+              <Button size="lg" onClick={(e) => setHasAccount(!hasAccount)}>
+                Don't have an account?
+              </Button>
+            </Row>
+          </Card.Footer>
+        </Card>
       ) : (
-        <Container>
-          <h2>signup</h2>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Email Address</Form.Label>
-              <Form.Control
-                type="email"
-                placeHolder="Email"
-                name="email"
-                value={email}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeHolder="Password"
-                name="password"
-                value={password}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeHolder="Confirm Password"
-                name="confirm"
-                value={confirmPassword}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-          </Form>
-        </Container>
+        <Card className="signUpCard mt-5 p-3">
+          <Card.Title>
+            <h2>signup</h2>
+          </Card.Title>
+          <Card.Body>
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label>Email Address</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeHolder="Email"
+                  name="email"
+                  value={email}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeHolder="Password"
+                  name="password"
+                  value={password}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeHolder="Confirm Password"
+                  name="confirm"
+                  value={confirmPassword}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+            </Form>
+            <Row className="d-flex align-content-center">
+              <Button size="lg" variant="success">
+                Login
+              </Button>
+            </Row>
+          </Card.Body>
+          <Card.Footer className="blankFooter">
+            <Row size="lg" className="d-flex align-content-center">
+              <Button onClick={(e) => setHasAccount(!hasAccount)}>
+                "I already have an account"
+              </Button>
+            </Row>
+          </Card.Footer>
+        </Card>
       )}
-      <Button onClick={(e) => setHasAccount(!hasAccount)}>
-        {hasAccount ? "Need an account?" : "I already have an account"}
-      </Button>
     </Container>
   );
 };

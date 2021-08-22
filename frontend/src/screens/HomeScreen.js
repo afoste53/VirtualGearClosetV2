@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react";
 import UserContext from "../UserContext";
+import Header from "../components/Header";
 
 const HomeScreen = ({ history }) => {
   const { user } = useContext(UserContext);
@@ -11,9 +12,10 @@ const HomeScreen = ({ history }) => {
   }, [user]);
 
   return (
-    <div>
+    <>
+      <Header />
       <h2>homescreen</h2>
-    </div>
+    </>
   );
 };
 
