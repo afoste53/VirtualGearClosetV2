@@ -5,7 +5,7 @@ import "./App.css";
 import HomeScreen from "./screens/HomeScreen";
 import LoginSignUpScreen from "./screens/LoginSignUpScreen";
 import UserContext from "./UserContext";
-import Header from "./components/Header";
+import HeaderComponent from "./components/HeaderComponent";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -13,7 +13,7 @@ function App() {
   return (
     <UserContext.Provider value={{ user, setUser }}>
       <Router>
-        {user && <Header />}
+        {user && <HeaderComponent />}
         <Container>
           <Route path="/login" component={LoginSignUpScreen} />
         </Container>

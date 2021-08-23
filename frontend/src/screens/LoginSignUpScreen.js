@@ -68,7 +68,77 @@ const LoginSignUpScreen = ({ history }) => {
     setUser({
       firstName: "John",
       lastName: "Doe",
-      closets: [],
+      closets: [
+        {
+          closetName: "All Gear",
+          gear: [
+            {
+              name: "sleeping bag",
+              color: "red",
+              weight: 7,
+              notes: "",
+              cost: "",
+              quantity: 1,
+            },
+            {
+              name: "tent",
+              color: "red",
+              weight: 7,
+              notes: "",
+              cost: "",
+              quantity: 1,
+            },
+            {
+              name: "green tent",
+              color: "green",
+              weight: 7,
+              notes: "",
+              cost: "",
+              quantity: 1,
+            },
+            {
+              name: "coat",
+              color: "red",
+              weight: 7,
+              notes: "",
+              cost: "",
+              quantity: 1,
+            },
+            {
+              name: "pack",
+              color: "red",
+              weight: 7,
+              notes: "",
+              cost: "",
+              quantity: 1,
+            },
+            {
+              name: "bike",
+              color: "red",
+              weight: 7,
+              notes: "",
+              cost: "",
+              quantity: 1,
+            },
+            {
+              name: "slingshot",
+              color: "red",
+              weight: 7,
+              notes: "",
+              cost: "",
+              quantity: 1,
+            },
+            {
+              name: "cooler",
+              color: "red",
+              weight: 7,
+              notes: "",
+              cost: "",
+              quantity: 1,
+            },
+          ],
+        },
+      ],
     });
     history.push("/");
   };

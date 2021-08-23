@@ -1,6 +1,7 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserContext from "../UserContext";
-import { Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import ToolbarComponent from "../components/ToolbarComponent";
 
 const HomeScreen = ({ history }) => {
   const { user } = useContext(UserContext);
@@ -11,30 +12,28 @@ const HomeScreen = ({ history }) => {
     }
   }, [user]);
 
+  const [showToolBar, setShowToolbar] = useState(false);
+
   return (
-    <Container>
-      {/**user?.closets.length === 0 && (
-        <Container className="py-2 mt-3" id="newUserDialog">
-          <p className="d-flex justify-content-center h4 mb-3">
-            New here? We can help you get started!
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci
-            assumenda blanditiis ducimus eius eum illum laudantium, maxime, nisi
-            quo sit unde velit? Accusamus, ad alias animi enim et excepturi
-            molestiae praesentium quaerat vel voluptas voluptatem.
-          </p>
-        </Container>
-      )**/}
-      <Row>
-        <Col xs={12} md={6}>
-          Closets
+    <Row className={showToolBar ? "me-5" : "mx-5"}>
+      {showToolBar && (
+        <Col xs={4} lg={2}>
+          <ToolbarComponent className="px-5" />
         </Col>
-        <Col xs={6} md={4}>
-          Closets
-        </Col>
-      </Row>
-    </Container>
+      )}
+      <Col xs={1} className={!showToolBar && "ms-5"}>
+        <Button
+          variant="dark"
+          className={showToolBar ? "toolbarButton rotated" : "toolbarButton"}
+          onClick={(e) => setShowToolbar(!showToolBar)}
+        >
+          <i className="fas fa-bars" />
+        </Button>
+      </Col>
+      <Col xs={7} lg={9}>
+        <Container>closets</Container>
+      </Col>
+    </Row>
   );
 };
 
