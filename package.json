@@ -1,5 +1,20 @@
-{
+{  "name": "mern_ecommerce",
+  "version": "1.0.0",
+  "description": "MERN Shopping Cart App",
+  "main": "server.js",
+  "type": "module",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.13.8",
     "prettier": "^2.3.2"
-  }
+  },
+  "devDependencies": {
+    "colors": "^1.4.0",
+    "concurrently": "^6.2.1",
+    "nodemon": "^2.0.12"
+  },
+  "author": "Gabe Foster",
+  "license": "ISC"
 }
