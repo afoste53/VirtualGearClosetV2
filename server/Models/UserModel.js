@@ -28,7 +28,7 @@ const userSchema = mongoose.Schema(
     },
     closets: [
       {
-        name: String,
+        closetName: String,
         closetId: {
           type: mongoose.Schema.ObjectId,
           ref: "Closet",

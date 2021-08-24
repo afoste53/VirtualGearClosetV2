@@ -1,4 +1,5 @@
 import User from "../Models/UserModel.js";
+import Closet from "../Models/ClosetModel.js";
 import generateToken from "../Utils/generateToken.js";
 import asyncHandler from "express-async-handler";
 
@@ -16,6 +17,7 @@ const authUser = asyncHandler(async (req, res) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email,
+      closets: user.closets,
       token: generateToken(user._id),
     });
   } else {
@@ -46,7 +48,21 @@ const createUser = asyncHandler(async (req, res) => {
       lastName,
       email,
       password,
+      closets: [],
     });
+
+    // create default closet
+    const defaultCloset = Closet.create({
+      name: "All Gear",
+      gear: [],
+      owner: user._id,
+    });
+
+    await user.closets.push({
+      closetName: "All Gear",
+      closetId: defaultCloset._id,
+    });
+    await user.save();
 
     if (user) {
       res.status(201).json({
@@ -54,6 +70,7 @@ const createUser = asyncHandler(async (req, res) => {
         firstName,
         lastName,
         email,
+        closets: user.closets,
         token: generateToken(user._id),
       });
     } else {
