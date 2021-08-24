@@ -7,11 +7,7 @@ import asyncHandler from "express-async-handler";
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  console.log(email, password);
-
-  const user = await User.findOne({ email });
-
-  console.log(user);
+  const user = await User.findOne({ email }).select("+password");
 
   if (user && (await user.matchPassword(password))) {
     res.status(200).json({
@@ -69,7 +65,22 @@ const createUser = asyncHandler(async (req, res) => {
 
 // @desc        Get user by id
 // @route       GET /api/users/:id
-const getUserById = async (req, res) => {};
+const getUserById = asyncHandler(async (req, res) => {
+  const user = await User.findOne({ _id: req.params.id });
+
+  if (user) {
+    res.status(200).json({
+      Success: true,
+      user,
+    });
+  } else {
+    res.status(400).json({
+      Success: false,
+      Error: `User not found with id ${req.params.id}`,
+    });
+    throw new Error(`User not found with id ${req.params.id}`);
+  }
+});
 
 // @desc        Update user by id
 // @route       Put /api/users/:id
