@@ -3,8 +3,33 @@ import generateToken from "../Utils/generateToken.js";
 import asyncHandler from "express-async-handler";
 
 // @desc        Auth Users and get token
-//@route       POST /api/users/login
-const authUser = async (req, res) => {};
+// @route       POST /api/users/login
+const authUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  console.log(email, password);
+
+  const user = await User.findOne({ email });
+
+  console.log(user);
+
+  if (user && (await user.matchPassword(password))) {
+    res.status(200).json({
+      Success: true,
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(401).json({
+      Success: false,
+      Error: "Invalid credentials",
+    });
+    throw new Error("Invalid credentials");
+  }
+});
 
 // @desc        Create a new user
 // @route       POST /api/users/
