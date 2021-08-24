@@ -2,6 +2,7 @@ import express from "express";
 import colors from "colors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import mongoSanitize from "express-mongo-sanitize";
 
 // Import routes
 import UserRoutes from "./Routes/UserRoutes.js";
@@ -28,7 +29,15 @@ const app = express();
 // enable server to parse body of requests
 app.use(express.json());
 
+// routes
 app.use("/api/users", UserRoutes);
+
+// Sanitize variables
+app.use(
+  mongoSanitize({
+    replaceWith: "_",
+  })
+);
 
 const PORT = process.env.PORT || 8080;
 

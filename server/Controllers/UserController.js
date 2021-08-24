@@ -66,7 +66,7 @@ const createUser = asyncHandler(async (req, res) => {
 // @desc        Get user by id
 // @route       GET /api/users/:id
 const getUserById = asyncHandler(async (req, res) => {
-  const user = await User.findOne({ _id: req.params.id });
+  const user = await User.findById(req.params.id);
 
   if (user) {
     res.status(200).json({
@@ -84,7 +84,35 @@ const getUserById = asyncHandler(async (req, res) => {
 
 // @desc        Update user by id
 // @route       Put /api/users/:id
-const updateUser = async (req, res) => {};
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
+    user.email = req.body.email;
+
+    user.password = req.body.password;
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      email: updatedUser.email,
+      token: generateToken(updatedUser._id),
+    });
+  } else {
+    const error = `No user found with id ${req.params.id}`;
+
+    res.status(404).json({
+      Success: false,
+      Error: error,
+    });
+    throw new Error(error);
+  }
+});
 
 // @desc        Delete user by id
 // @route       Delete /api/users/:id

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
-import User from "../models/UserModel.js";
+import User from "../Models/UserModel.js";
 
 const authMiddleware = asyncHandler(async (req, res, next) => {
   let token;
@@ -19,13 +19,19 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
       next();
     } catch (err) {
       console.error(err);
-      res.status(401);
+      res.status(401).json({
+        Success: false,
+        Error: err.message,
+      });
       throw new Error("Not Authorized - Token Failed");
     }
   }
 
   if (!token) {
-    res.status(401);
+    res.status(401).json({
+      Success: false,
+      Error: "Not authorized - No token",
+    });
     throw new Error("Not Authorized - No Token");
   }
 });
