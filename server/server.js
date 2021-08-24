@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 // Import routes
+import UserRoutes from "./Routes/UserRoutes.js";
 
 // configure dotenv to read variables from .env as per documentation
 dotenv.config();
@@ -27,7 +28,7 @@ const app = express();
 // enable server to parse body of requests
 app.use(express.json());
 
-app.use();
+app.use("/api/users", UserRoutes);
 
 const PORT = process.env.PORT || 8080;
 

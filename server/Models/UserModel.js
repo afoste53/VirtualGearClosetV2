@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrpyt from "bcryptjs";
 
-const userSchema = mongoose.schema(
+const userSchema = mongoose.Schema(
   {
     firstName: {
       type: String,
