@@ -116,6 +116,13 @@ const updateUser = asyncHandler(async (req, res) => {
 
 // @desc        Delete user by id
 // @route       Delete /api/users/:id
-const deleteUser = async (req, res) => {};
+const deleteUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndDelete(req.params.id);
+
+  res.status(200).json({
+    Success: true,
+    Message: `User with id ${req.params.id} deleted`,
+  });
+});
 
 export { authUser, createUser, getUserById, updateUser, deleteUser };
