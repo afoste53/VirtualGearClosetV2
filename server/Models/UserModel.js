@@ -26,6 +26,15 @@ const userSchema = mongoose.Schema(
       minLength: 6,
       select: false,
     },
+    closets: [
+      {
+        name: String,
+        closetId: {
+          type: mongoose.Schema.ObjectId,
+          ref: "Closet",
+        },
+      },
+    ],
   },
   {
     timeStamps: true,

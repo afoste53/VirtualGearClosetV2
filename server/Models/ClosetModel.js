@@ -12,11 +12,11 @@ const closetSchema = mongoose.Schema({
   },
   gear: [
     {
+      name: String,
       item: {
         type: mongoose.Schema.ObjectId,
         ref: "Gear",
       },
-      name: String,
     },
   ],
 });

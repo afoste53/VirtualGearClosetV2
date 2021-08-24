@@ -41,7 +41,7 @@ const gearSchema = mongoose.Schema({
   closets: [
     {
       name: String,
-      closetName: {
+      closetId: {
         type: mongoose.Schema.ObjectId,
         ref: "Closet",
       },
