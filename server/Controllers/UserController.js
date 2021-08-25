@@ -95,11 +95,34 @@ const getUserById = asyncHandler(async (req, res) => {
       user,
     });
   } else {
+    const error = `User not found with id ${req.params.id}`;
+
     res.status(400).json({
       Success: false,
-      Error: `User not found with id ${req.params.id}`,
+      Error: error,
     });
-    throw new Error(`User not found with id ${req.params.id}`);
+    throw new Error(error);
+  }
+});
+
+// @desc      Get all users
+// @route     GET /api/users/
+const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.find();
+
+  if (users) {
+    res.status(200).json({
+      Success: true,
+      users,
+    });
+  } else {
+    const error = "Unable to fetch all users";
+
+    res.status(400).json({
+      Success: false,
+      Error: error,
+    });
+    throw new Error(error);
   }
 });
 
@@ -146,4 +169,11 @@ const deleteUser = asyncHandler(async (req, res) => {
   });
 });
 
-export { authUser, createUser, getUserById, updateUser, deleteUser };
+export {
+  authUser,
+  createUser,
+  getUserById,
+  getAllUsers,
+  updateUser,
+  deleteUser,
+};

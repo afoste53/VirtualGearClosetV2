@@ -6,7 +6,7 @@ import mongoSanitize from "express-mongo-sanitize";
 
 // Import routes
 import UserRoutes from "./Routes/UserRoutes.js";
-import GearRoutes from "./Routes/GearRoutes.js";
+import ClosetRoutes from "./Routes/ClosetRoutes.js";
 
 // configure dotenv to read variables from .env as per documentation
 dotenv.config();
@@ -32,7 +32,7 @@ app.use(express.json());
 
 // Tell express to use routes
 app.use("/api/users", UserRoutes);
-app.use("/api/gear", GearRoutes);
+app.use("/api/closets", ClosetRoutes);
 
 // Sanitize variables
 app.use(
