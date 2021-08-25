@@ -1,4 +1,5 @@
 import User from "../Models/UserModel.js";
+import Closet from "../Models/ClosetModel.js";
 import generateToken from "../Utils/generateToken.js";
 import asyncHandler from "express-async-handler";
 
@@ -47,32 +48,38 @@ const createUser = asyncHandler(async (req, res) => {
       lastName,
       email,
       password,
-      closets: [
-        {
-          closetName: "All gear",
-          gearId: [],
-        },
-      ],
+      closets: [],
     });
 
-    if (user) {
-      res.status(201).json({
-        Success: true,
-        _id: user._id,
-        firstName,
-        lastName,
-        email,
-        closets: user.closets,
-        token: generateToken(user._id),
-      });
-    } else {
-      const error = "Invalid user data";
+    const defaultCloset = await Closet.create({
+      name: "All Gear",
+      gear: [],
+      owner: user._id,
+    });
 
-      res.status(400).json({
-        Success: false,
-        Error: error,
-      });
-      throw new Error(error);
+    if (defaultCloset) {
+      user.closets.push(defaultCloset._id);
+      await user.save();
+
+      if (user) {
+        res.status(201).json({
+          Success: true,
+          _id: user._id,
+          firstName,
+          lastName,
+          email,
+          closets: user.closets,
+          token: generateToken(user._id),
+        });
+      } else {
+        const error = "Invalid user data";
+
+        res.status(400).json({
+          Success: false,
+          Error: error,
+        });
+        throw new Error(error);
+      }
     }
   }
 });
