@@ -5,7 +5,8 @@ import mongoose from "mongoose";
 import mongoSanitize from "express-mongo-sanitize";
 
 // Import routes
-import UserRoutes from "./ClosetRoutes/UserRoutes.js";
+import UserRoutes from "./Routes/UserRoutes.js";
+import GearRoutes from "./Routes/GearRoutes.js";
 
 // configure dotenv to read variables from .env as per documentation
 dotenv.config();
@@ -29,8 +30,9 @@ const app = express();
 // enable server to parse body of requests
 app.use(express.json());
 
-// routes
+// Tell express to use routes
 app.use("/api/users", UserRoutes);
+app.use("/api/gear", GearRoutes);
 
 // Sanitize variables
 app.use(

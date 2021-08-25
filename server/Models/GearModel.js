@@ -6,7 +6,9 @@ const gearSchema = mongoose.Schema({
     required: [true, "Please add a name"],
   },
   weight: {
-    type: Number,
+    w: {
+      type: Number,
+    },
     unit: {
       type: String,
       enum: ["oz", "g", "kg", "lb"],
@@ -20,7 +22,9 @@ const gearSchema = mongoose.Schema({
     maxLength: [250, "Please shorten the notes"],
   },
   cost: {
-    type: Number,
+    c: {
+      type: Number,
+    },
     currency: {
       type: String,
       enum: ["dollars", "euros", "yen", "pounds", "other"],

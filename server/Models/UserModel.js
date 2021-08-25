@@ -29,10 +29,7 @@ const userSchema = mongoose.Schema(
     closets: [
       {
         closetName: String,
-        closetId: {
-          type: mongoose.Schema.ObjectId,
-          ref: "Closet",
-        },
+        gearIds: [],
       },
     ],
   },
