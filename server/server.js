@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import mongoSanitize from "express-mongo-sanitize";
 
 // Import routes
-import UserRoutes from "./Routes/UserRoutes.js";
+import UserRoutes from "./ClosetRoutes/UserRoutes.js";
 
 // configure dotenv to read variables from .env as per documentation
 dotenv.config();
