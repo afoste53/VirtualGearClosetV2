@@ -25,7 +25,6 @@ const authUser = asyncHandler(async (req, res) => {
       Success: false,
       Error: "Invalid credentials",
     });
-    throw new Error("Invalid credentials");
   }
 });
 
@@ -41,7 +40,6 @@ const createUser = asyncHandler(async (req, res) => {
       Success: false,
       Error: "User already exists",
     });
-    throw new Error("User already exists");
   } else {
     const user = await User.create({
       firstName,
@@ -50,18 +48,17 @@ const createUser = asyncHandler(async (req, res) => {
       password,
       closets: [],
     });
+    if (user) {
+      const defaultCloset = await Closet.create({
+        name: "All Gear",
+        gear: [],
+        owner: user._id,
+      });
 
-    const defaultCloset = await Closet.create({
-      name: "All Gear",
-      gear: [],
-      owner: user._id,
-    });
+      if (defaultCloset) {
+        user.closets.push(defaultCloset._id);
+        await user.save();
 
-    if (defaultCloset) {
-      user.closets.push(defaultCloset._id);
-      await user.save();
-
-      if (user) {
         res.status(201).json({
           Success: true,
           _id: user._id,
@@ -72,13 +69,10 @@ const createUser = asyncHandler(async (req, res) => {
           token: generateToken(user._id),
         });
       } else {
-        const error = "Invalid user data";
-
         res.status(400).json({
           Success: false,
-          Error: error,
+          Error: "Invalid user data",
         });
-        throw new Error(error);
       }
     }
   }
@@ -129,24 +123,16 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @desc        Update user by id
 // @route       Put /api/users/:id
 const updateUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const { firstName, lastName, email, password } = req.body;
+
+  const user = User.findOneAndUpdate(
+    { _id: req.params.id },
+    { firstName, lastName, email, password },
+    { new: true }
+  );
 
   if (user) {
-    user.firstName = req.body.firstName;
-    user.lastName = req.body.lastName;
-    user.email = req.body.email;
-
-    user.password = req.body.password;
-
-    const updatedUser = await user.save();
-
-    res.json({
-      _id: updatedUser._id,
-      firstName: updatedUser.firstName,
-      lastName: updatedUser.lastName,
-      email: updatedUser.email,
-      token: generateToken(updatedUser._id),
-    });
+    res.status(204).json({ Success: true, user });
   } else {
     const error = `No user found with id ${req.params.id}`;
 
