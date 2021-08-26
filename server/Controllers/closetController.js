@@ -24,13 +24,10 @@ const createCloset = asyncHandler(async (req, res) => {
       closet,
     });
   } else {
-    const error = "Invalid closet data";
-
     res.status(400).json({
       Success: false,
-      Error: error,
+      Error: "Invalid closet data",
     });
-    throw new Error(error);
   }
 });
 
@@ -45,14 +42,10 @@ const getAllClosets = asyncHandler(async (req, res) => {
       closets,
     });
   } else {
-    const error = "Unable to fetch all closets";
-
     res.status(400).json({
       Success: false,
-      Error: error,
+      Error: "Unable to fetch all closets",
     });
-
-    throw new Error(error);
   }
 });
 
@@ -67,13 +60,10 @@ const getClosetsByOwner = asyncHandler(async (req, res) => {
       closets,
     });
   } else {
-    const error = `No closets found owned by ownerId ${req.params.ownerId}`;
-
-    res.status(400).json({
+    res.status(404).json({
       Success: false,
-      Error: error,
+      Error: `No closets found owned by ownerId ${req.params.ownerId}`,
     });
-    throw new Error(error);
   }
 });
 
