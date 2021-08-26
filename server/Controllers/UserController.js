@@ -89,13 +89,10 @@ const getUserById = asyncHandler(async (req, res) => {
       user,
     });
   } else {
-    const error = `User not found with id ${req.params.id}`;
-
-    res.status(400).json({
+    res.status(404).json({
       Success: false,
-      Error: error,
+      Error: `User not found with id ${req.params.id}`,
     });
-    throw new Error(error);
   }
 });
 
@@ -110,13 +107,10 @@ const getAllUsers = asyncHandler(async (req, res) => {
       users,
     });
   } else {
-    const error = "Unable to fetch all users";
-
     res.status(400).json({
       Success: false,
-      Error: error,
+      Error: "Unable to fetch all users",
     });
-    throw new Error(error);
   }
 });
 
@@ -125,22 +119,22 @@ const getAllUsers = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
-  const user = User.findOneAndUpdate(
+  const user = await User.findOneAndUpdate(
     { _id: req.params.id },
     { firstName, lastName, email, password },
     { new: true }
   );
 
   if (user) {
-    res.status(204).json({ Success: true, user });
+    res.status(200).json({
+      Success: true,
+      user,
+    });
   } else {
-    const error = `No user found with id ${req.params.id}`;
-
     res.status(404).json({
       Success: false,
-      Error: error,
+      Error: `No user found with id ${req.params.id}`,
     });
-    throw new Error(error);
   }
 });
 
