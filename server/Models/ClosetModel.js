@@ -12,6 +12,18 @@ const closetSchema = mongoose.Schema({
   },
 });
 
+closetSchema.methods.addGearToCloset = function (gearToAdd) {
+  gearToAdd.forEach((g) => {
+    this.gear.push(g);
+  });
+};
+
+closetSchema.methods.removeGearFromCloset = function (gearToRemove) {
+  gearToRemove.forEach((g) => {
+    this.gear.filter((c) => c != g);
+  });
+};
+
 const Closet = mongoose.model("Closet", closetSchema);
 
 export default Closet;
