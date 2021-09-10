@@ -20,7 +20,8 @@ closetSchema.methods.addGearToCloset = function (gearToAdd) {
 
 closetSchema.methods.removeGearFromCloset = function (gearToRemove) {
   gearToRemove.forEach((g) => {
-    this.gear.filter((c) => c != g);
+    const temp = this.gear.filter((c) => c.id != g);
+    this.gear = temp;
   });
 };
 

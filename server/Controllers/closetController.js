@@ -193,10 +193,6 @@ const removeGearFromCloset = asyncHandler(async (req, res) => {
   } else {
     const { owner } = closet;
 
-    // Temp variable to hold filtered gear
-    let tempDefaultCloset = [];
-    let tempCloset = [];
-
     // Check if it's the default closet and remove gear
     // from it default closet as well if so
     if (closet.name !== "All Gear") {
@@ -206,29 +202,14 @@ const removeGearFromCloset = asyncHandler(async (req, res) => {
       });
 
       // Filter gear out of each closet
-      gearToRemove.forEach((g) => {
-        defaultCloset.gear.forEach((c) => {
-          if (g.id != c.id) tempDefaultCloset.push(c);
-        });
-
-        closet.gear.forEach((c) => {
-          if (g.id != c.id) tempCloset.push(c);
-        });
-      });
-
-      defaultCloset.gear = tempDefaultCloset;
+      defaultCloset.removeGearFromCloset(gearToRemove);
       await defaultCloset.save();
 
-      closet.gear = tempCloset;
+      closet.removeGearFromCloset(gearToRemove);
       await closet.save();
     } else {
       // Filter gear out of each closet
-      gearToRemove.forEach((g) =>
-        closet.gear.forEach((c) => {
-          if (g.id != c.id) tempCloset.push(c);
-        })
-      );
-
+      closet.removeGearFromCloset(gearToRemove);
       await closet.save();
     }
 
