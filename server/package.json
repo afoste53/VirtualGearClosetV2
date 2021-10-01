@@ -1,0 +1,13 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "VGCv2 Server",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest --coverage",
+    "start": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

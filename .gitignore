@@ -4,3 +4,4 @@
 .env
 /frontend/node_modules
 /frontend/.gitignore
+./server/.env
