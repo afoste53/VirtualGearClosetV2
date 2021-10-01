@@ -236,7 +236,7 @@ const LoginSignUpScreen = ({ history }) => {
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control
                       type="email"
-                      placeHolder="Email"
+                      placeholder="Email"
                       name="email"
                       value={email}
                       onChange={handleInputChange}
