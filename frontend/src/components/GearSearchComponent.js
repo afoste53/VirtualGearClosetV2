@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import UserContext from "../UserContext";
+import UserContext from "../Utils/UserContext";
 import { Container, Form } from "react-bootstrap";
 import ResultComponent from "./ResultComponent";
 

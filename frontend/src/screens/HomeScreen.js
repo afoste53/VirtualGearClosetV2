@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import UserContext from "../UserContext";
+import UserContext from "../Utils/UserContext";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import ToolbarComponent from "../components/ToolbarComponent";
 
 const HomeScreen = ({ history }) => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
   useEffect(() => {
     if (!user?.firstName) {

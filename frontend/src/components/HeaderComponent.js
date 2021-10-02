@@ -1,18 +1,19 @@
 import { useContext, useEffect } from "react";
-import { Col, Container, Nav, Navbar, NavDropdown, Row } from "react-bootstrap";
-import UserContext from "../UserContext";
+import { Col, Nav, Navbar, NavDropdown, Row } from "react-bootstrap";
+import UserContext from "../Utils/UserContext";
+import { withRouter } from "react-router";
 
-const HeaderComponent = () => {
-  let { user } = useContext(UserContext);
+const HeaderComponent = ({ history }) => {
+  let { user, setUser } = useContext(UserContext);
 
   return (
     <Navbar bg="primary" variant="dark" expand="sm">
       <Col className="d-flex mx-2 p-3">
         <Navbar.Brand href="/">
-          <span className="h3">{user.firstName}'s Virtual Gear Closet</span>
+          <span className="h3">{user?.firstName}'s Virtual Gear Closet</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        {user && (
+        {user?.firstName && (
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               <Nav.Link className="h5" href="/">
@@ -46,4 +47,4 @@ const HeaderComponent = () => {
   );
 };
 
-export default HeaderComponent;
+export default withRouter(HeaderComponent);

@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   Button,
   Card,
@@ -8,7 +8,9 @@ import {
   Modal,
   Row,
 } from "react-bootstrap";
-import UserContext from "../UserContext";
+import UserContext from "../Utils/UserContext.js";
+import instance from "../Utils/AxiosInstance";
+import { withRouter } from "react-router";
 
 const LoginSignUpScreen = ({ history }) => {
   const { user, setUser } = useContext(UserContext);
@@ -22,7 +24,12 @@ const LoginSignUpScreen = ({ history }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const passwordRef = useRef(null);
+  const OGpasswordRef = useRef(null);
   const [showPasswordError, setShowPasswordError] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("user")) history.push("/");
+  }, [localStorage.getItem("user")]);
 
   const handleInputChange = (e) => {
     switch (e.target.name) {
@@ -64,83 +71,96 @@ const LoginSignUpScreen = ({ history }) => {
     }
   };
 
-  const handleLogin = (e) => {
-    setUser({
-      firstName: "John",
-      lastName: "Doe",
-      closets: [
-        {
-          closetName: "All Gear",
-          gear: [
-            {
-              name: "sleeping bag",
-              color: "red",
-              weight: 7,
-              notes: "",
-              cost: "",
-              quantity: 1,
-            },
-            {
-              name: "tent",
-              color: "red",
-              weight: 7,
-              notes: "",
-              cost: "",
-              quantity: 1,
-            },
-            {
-              name: "green tent",
-              color: "green",
-              weight: 7,
-              notes: "",
-              cost: "",
-              quantity: 1,
-            },
-            {
-              name: "coat",
-              color: "red",
-              weight: 7,
-              notes: "",
-              cost: "",
-              quantity: 1,
-            },
-            {
-              name: "pack",
-              color: "red",
-              weight: 7,
-              notes: "",
-              cost: "",
-              quantity: 1,
-            },
-            {
-              name: "bike",
-              color: "red",
-              weight: 7,
-              notes: "",
-              cost: "",
-              quantity: 1,
-            },
-            {
-              name: "slingshot",
-              color: "red",
-              weight: 7,
-              notes: "",
-              cost: "",
-              quantity: 1,
-            },
-            {
-              name: "cooler",
-              color: "red",
-              weight: 7,
-              notes: "",
-              cost: "",
-              quantity: 1,
-            },
-          ],
-        },
-      ],
-    });
-    history.push("/");
+  const handleLogin = async (e) => {
+    // setUser({
+    //   firstName: "John",
+    //   lastName: "Doe",
+    //   closets: [
+    //     {
+    //       closetName: "All Gear",
+    //       gear: [
+    //         {
+    //           name: "sleeping bag",
+    //           color: "red",
+    //           weight: 7,
+    //           notes: "",
+    //           cost: "",
+    //           quantity: 1,
+    //         },
+    //         {
+    //           name: "tent",
+    //           color: "red",
+    //           weight: 7,
+    //           notes: "",
+    //           cost: "",
+    //           quantity: 1,
+    //         },
+    //         {
+    //           name: "green tent",
+    //           color: "green",
+    //           weight: 7,
+    //           notes: "",
+    //           cost: "",
+    //           quantity: 1,
+    //         },
+    //         {
+    //           name: "coat",
+    //           color: "red",
+    //           weight: 7,
+    //           notes: "",
+    //           cost: "",
+    //           quantity: 1,
+    //         },
+    //         {
+    //           name: "pack",
+    //           color: "red",
+    //           weight: 7,
+    //           notes: "",
+    //           cost: "",
+    //           quantity: 1,
+    //         },
+    //         {
+    //           name: "bike",
+    //           color: "red",
+    //           weight: 7,
+    //           notes: "",
+    //           cost: "",
+    //           quantity: 1,
+    //         },
+    //         {
+    //           name: "slingshot",
+    //           color: "red",
+    //           weight: 7,
+    //           notes: "",
+    //           cost: "",
+    //           quantity: 1,
+    //         },
+    //         {
+    //           name: "cooler",
+    //           color: "red",
+    //           weight: 7,
+    //           notes: "",
+    //           cost: "",
+    //           quantity: 1,
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // });
+    // call to backend with login details
+    try {
+      let res = await instance.post(
+        "/api/users/login",
+        { email, password },
+        { headers: { "Access-Control-Allow-Origin": "true" } }
+      );
+      setUser(res.data);
+      // push to homepage
+      history.push("/");
+    } catch (err) {
+      setShowPasswordError(true);
+      OGpasswordRef?.current?.focus();
+    }
   };
 
   return (
@@ -249,9 +269,17 @@ const LoginSignUpScreen = ({ history }) => {
                       placeHolder="Password"
                       name="password"
                       value={password}
+                      ref={OGpasswordRef}
                       onChange={handleInputChange}
                     />
                   </Form.Group>
+                  {showPasswordError && hasAccount && (
+                    <Row>
+                      <p className="d-flex justify-content-center text-danger">
+                        <strong>Invalid Credentials</strong>
+                      </p>
+                    </Row>
+                  )}
                   <Row className="d-flex align-content-center">
                     <Button size="lg" variant="success" onClick={handleLogin}>
                       Login
@@ -278,4 +306,4 @@ const LoginSignUpScreen = ({ history }) => {
   );
 };
 
-export default LoginSignUpScreen;
+export default withRouter(LoginSignUpScreen);
