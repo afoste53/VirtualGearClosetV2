@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../Utils/UserContext";
 import { Container, Form } from "react-bootstrap";
-import ResultComponent from "./ResultComponent";
+import "../App.css";
 import instance from "../Utils/AxiosInstance";
 
 const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
@@ -10,10 +10,16 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
   const [filter, setFilter] = useState("");
 
   const [closet, setCloset] = useState([]);
+  const [allGear, setAllGear] = useState(<li>bananas</li>);
 
   useEffect(async () => {
     await fetchClosets();
   }, []);
+
+  useEffect(() => {
+    const ag = user?.closets.filter((c) => c.name === "All Gear")[0]?.gear;
+    setAllGear(ag);
+  }, [closet]);
 
   const fetchClosets = async () => {
     try {
@@ -23,7 +29,8 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
           Authorization: `Bearer ${user.token}`,
         },
       });
-      setCloset(c);
+      setUser({ ...user, closets: c.data.closets });
+      setCloset(c.data.closets);
     } catch (err) {
       console.error(err);
     }
@@ -37,8 +44,14 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
         onChange={(e) => setFilter(e.target.value)}
       />
       <ul className="list-unstyled px-3 py-1 my-1 searchResults">
-        {closet.length > 0 &&
-          closet.map((c) => <li key={c?._id}>{c?.name}</li>)}
+        {allGear?.length > 0 &&
+          allGear
+            .filter((g) => g.name.toLowerCase().includes(filter))
+            .map((g) => (
+              <li className="results" key={g.id}>
+                {g.name}
+              </li>
+            ))}
       </ul>
     </Container>
   );

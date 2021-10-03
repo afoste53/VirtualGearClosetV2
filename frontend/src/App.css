@@ -94,8 +94,14 @@ body{
 .result {
   padding: 1px;
   cursor: pointer;
+  background-color: white;
+  border-bottom: 1px solid darkgrey;
 }
 
 .result:hover{
   transform: scale(1.1);
+}
+
+.result:nth-child(even){
+  background-color: lightgray;
 }
