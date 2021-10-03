@@ -7,25 +7,27 @@ const HeaderComponent = () => {
   let { user } = useContext(UserContext);
 
   return (
-    <Navbar bg="primary" variant="dark" expand="sm">
+    <Navbar className="bg-navy" variant="dark" expand="sm">
       <Col className="d-flex mx-2 p-3">
         <LinkContainer to="/">
           <Navbar.Brand>
-            <span className="h3">{user?.firstName}'s Virtual Gear Closet</span>
+            <span className="h3 text-cream">
+              {user?.firstName}'s Virtual Gear Closet
+            </span>
           </Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         {user?.firstName && (
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link className="h5" to="/">
+              <Nav.Link className="h5 text-cream" to="/">
                 Home
               </Nav.Link>
-              <Nav.Link className="h5" href="/">
+              <Nav.Link className="h5 text-cream" href="/">
                 Link
               </Nav.Link>
               <NavDropdown
-                className="h5 me-5"
+                className="h5 me-5 text-cream"
                 title="Profile"
                 id="basic-nav-dropdown"
               >

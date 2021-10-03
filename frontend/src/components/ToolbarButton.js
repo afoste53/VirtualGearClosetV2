@@ -6,9 +6,7 @@ const ToolbarButton = ({ setShow, show }) => {
   };
 
   return (
-    <Col
-      className={show ? "bg-light-blue toolbarButtonCol" : "toolbarButtonCol"}
-    >
+    <Col className="toolbarButtonCol">
       <Button onClick={handleClick}>
         <span>
           <i className="fas fa-bars" />

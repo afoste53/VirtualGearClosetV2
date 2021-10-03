@@ -39,7 +39,7 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
     <Container className="p-3">
       <Form.Control
         size="small"
-        placeholder="Search..."
+        placeholder="Search Your Gear..."
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />
@@ -48,7 +48,7 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
           allGear
             .filter((g) => g.name.toLowerCase().includes(filter))
             .map((g) => (
-              <li className="results" key={g.id}>
+              <li className="result" key={g.id}>
                 {g.name}
               </li>
             ))}

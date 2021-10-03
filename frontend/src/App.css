@@ -5,8 +5,16 @@ body{
   overflow-x: hidden;
 }
 
+.text-cream {
+  color: #F1FAEE;
+}
+
+.bg-navy {
+  background: #1D3557;
+}
+
 .bg-light-blue {
-  background: rgba(75, 156, 211, 0.2);
+  background: #A8DADC
 }
 
 .fullWidth {
@@ -63,10 +71,14 @@ body{
 }
 
 .toolbarButtonCol {
+  margin-left: 40px;
+  margin-right: 10px;
   padding: 10px;
 }
 
 .mainscreen{
+  padding: 10px;
+  margin-left: 10px;
   height: 85vh;
   padding: 15px;
 }
@@ -86,22 +98,19 @@ body{
 }
 
 .searchResults {
-  background: white;
-  max-height: 175px;
+  background: #F1FAEE;
+  height: 175px;
   overflow-y: auto;
 }
 
 .result {
-  padding: 1px;
+  margin: 2px;
+  padding: 5px;
   cursor: pointer;
-  background-color: white;
-  border-bottom: 1px solid darkgrey;
+  background-color: #F1FAEE;
+  width: 100%;
 }
 
 .result:hover{
   transform: scale(1.1);
-}
-
-.result:nth-child(even){
-  background-color: lightgray;
 }
