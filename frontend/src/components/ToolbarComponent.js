@@ -3,8 +3,8 @@ import GearSearchComponent from "./GearSearchComponent";
 
 const ToolbarComponent = () => {
   return (
-    <Col className="toolbar">
-      <div className="px-1">
+    <Col className="toolbar bg-light-blue">
+      <div>
         <Row>
           <GearSearchComponent />
         </Row>

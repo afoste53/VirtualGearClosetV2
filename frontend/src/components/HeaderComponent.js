@@ -1,22 +1,24 @@
-import { useContext, useEffect } from "react";
-import { Col, Nav, Navbar, NavDropdown, Row } from "react-bootstrap";
-import UserContext from "../Utils/UserContext";
-import { withRouter } from "react-router";
+import { useContext } from "react";
+import { Col, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
+import { UserContext } from "../Utils/UserContext";
 
-const HeaderComponent = ({ history }) => {
-  let { user, setUser } = useContext(UserContext);
+const HeaderComponent = () => {
+  let { user } = useContext(UserContext);
 
   return (
     <Navbar bg="primary" variant="dark" expand="sm">
       <Col className="d-flex mx-2 p-3">
-        <Navbar.Brand href="/">
-          <span className="h3">{user?.firstName}'s Virtual Gear Closet</span>
-        </Navbar.Brand>
+        <LinkContainer to="/">
+          <Navbar.Brand>
+            <span className="h3">{user?.firstName}'s Virtual Gear Closet</span>
+          </Navbar.Brand>
+        </LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         {user?.firstName && (
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link className="h5" href="/">
+              <Nav.Link className="h5" to="/">
                 Home
               </Nav.Link>
               <Nav.Link className="h5" href="/">
@@ -47,4 +49,4 @@ const HeaderComponent = ({ history }) => {
   );
 };
 
-export default withRouter(HeaderComponent);
+export default HeaderComponent;

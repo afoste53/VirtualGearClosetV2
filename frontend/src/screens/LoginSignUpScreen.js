@@ -8,7 +8,7 @@ import {
   Modal,
   Row,
 } from "react-bootstrap";
-import UserContext from "../Utils/UserContext.js";
+import { UserContext } from "../Utils/UserContext.js";
 import instance from "../Utils/AxiosInstance";
 import { withRouter } from "react-router";
 
@@ -26,10 +26,6 @@ const LoginSignUpScreen = ({ history }) => {
   const passwordRef = useRef(null);
   const OGpasswordRef = useRef(null);
   const [showPasswordError, setShowPasswordError] = useState(false);
-
-  useEffect(() => {
-    if (localStorage.getItem("user")) history.push("/");
-  }, [localStorage.getItem("user")]);
 
   const handleInputChange = (e) => {
     switch (e.target.name) {
@@ -72,81 +68,6 @@ const LoginSignUpScreen = ({ history }) => {
   };
 
   const handleLogin = async (e) => {
-    // setUser({
-    //   firstName: "John",
-    //   lastName: "Doe",
-    //   closets: [
-    //     {
-    //       closetName: "All Gear",
-    //       gear: [
-    //         {
-    //           name: "sleeping bag",
-    //           color: "red",
-    //           weight: 7,
-    //           notes: "",
-    //           cost: "",
-    //           quantity: 1,
-    //         },
-    //         {
-    //           name: "tent",
-    //           color: "red",
-    //           weight: 7,
-    //           notes: "",
-    //           cost: "",
-    //           quantity: 1,
-    //         },
-    //         {
-    //           name: "green tent",
-    //           color: "green",
-    //           weight: 7,
-    //           notes: "",
-    //           cost: "",
-    //           quantity: 1,
-    //         },
-    //         {
-    //           name: "coat",
-    //           color: "red",
-    //           weight: 7,
-    //           notes: "",
-    //           cost: "",
-    //           quantity: 1,
-    //         },
-    //         {
-    //           name: "pack",
-    //           color: "red",
-    //           weight: 7,
-    //           notes: "",
-    //           cost: "",
-    //           quantity: 1,
-    //         },
-    //         {
-    //           name: "bike",
-    //           color: "red",
-    //           weight: 7,
-    //           notes: "",
-    //           cost: "",
-    //           quantity: 1,
-    //         },
-    //         {
-    //           name: "slingshot",
-    //           color: "red",
-    //           weight: 7,
-    //           notes: "",
-    //           cost: "",
-    //           quantity: 1,
-    //         },
-    //         {
-    //           name: "cooler",
-    //           color: "red",
-    //           weight: 7,
-    //           notes: "",
-    //           cost: "",
-    //           quantity: 1,
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // });
     // call to backend with login details
     try {
       let res = await instance.post(
@@ -154,7 +75,15 @@ const LoginSignUpScreen = ({ history }) => {
         { email, password },
         { headers: { "Access-Control-Allow-Origin": "true" } }
       );
-      setUser(res.data);
+      setUser({
+        _id: res.data._id,
+        email: res.data.email,
+        firstName: res.data.firstName,
+        lastName: res.data.lastName,
+        closets: res.data.closets,
+        token: res.data.token,
+      });
+
       // push to homepage
       history.push("/");
     } catch (err) {
@@ -266,7 +195,7 @@ const LoginSignUpScreen = ({ history }) => {
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       type="password"
-                      placeHolder="Password"
+                      placeholder="Password"
                       name="password"
                       value={password}
                       ref={OGpasswordRef}

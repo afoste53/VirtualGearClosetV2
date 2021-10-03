@@ -41,6 +41,37 @@ body{
   border-radius: 15px;
 }
 
+.homescreen {
+  height: 85vh;
+  width: 100vw;
+  display: grid;
+}
+
+.toolbar-show {
+  grid-template-columns: 250px 75px auto;
+  grid-column-gap: 25px 25px;
+}
+
+.toolbar-hidden {
+  grid-template-columns: 75px auto;
+  grid-column-gap: 50px;
+}
+
+.toolbar {
+  height: 85vh;
+  padding: 15px;
+}
+
+.toolbarButtonCol {
+  padding: 10px;
+}
+
+.mainscreen{
+  height: 85vh;
+  padding: 15px;
+}
+
+
 .toolbarButton{
   -moz-transition: all 300ms linear;
   -webkit-transition: all 300ms linear;
@@ -52,16 +83,6 @@ body{
   -moz-transform: rotate(90deg);
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
-}
-
-.toolbarCol {
-  height: 80vh
-}
-
-.toolbar {
-  padding-top: 1px;
-  background: gray;
-  height: 80vh;
 }
 
 .searchResults {

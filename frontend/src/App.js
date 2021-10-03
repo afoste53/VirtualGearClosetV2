@@ -4,20 +4,20 @@ import { Container } from "react-bootstrap";
 import "./App.css";
 import HomeScreen from "./screens/HomeScreen";
 import LoginSignUpScreen from "./screens/LoginSignUpScreen";
-import UserContext from "./Utils/UserContext";
+import { UserContext } from "./Utils/UserContext";
 import HeaderComponent from "./components/HeaderComponent";
 
 function App() {
-  const [user, setUser] = useState(localStorage.getItem("user"));
+  const [user, setUser] = useState(null);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
       <Router>
         {user && <HeaderComponent />}
-        <Container>
+        <div>
           <Route exact path="/" component={HomeScreen} />
           <Route path="/login" component={LoginSignUpScreen} />
-        </Container>
+        </div>
       </Router>
     </UserContext.Provider>
   );
