@@ -101,6 +101,11 @@ body{
   background: #F1FAEE;
 }
 
+#toolbar-closet-select {
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
 .searchResults {
   background: #F1FAEE;
   height: 175px;

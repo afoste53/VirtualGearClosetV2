@@ -10,16 +10,18 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
   const [filter, setFilter] = useState("");
 
   const [closet, setCloset] = useState([]);
-  const [allGear, setAllGear] = useState(<li>bananas</li>);
+  const [closetToFilter, setClosetToFilter] = useState(<li>bananas</li>);
+
+  const [selectedCloset, setSelectedCloset] = useState("All Gear");
 
   useEffect(async () => {
     await fetchClosets();
   }, []);
 
   useEffect(() => {
-    const ag = user?.closets.filter((c) => c.name === "All Gear")[0]?.gear;
-    setAllGear(ag);
-  }, [closet]);
+    const c = user?.closets.filter((c) => c.name == selectedCloset)[0]?.gear;
+    setClosetToFilter(c);
+  }, [closet, selectedCloset]);
 
   const fetchClosets = async () => {
     try {
@@ -35,8 +37,26 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
       console.error(err);
     }
   };
+
+  const handleSelectedClosetChange = (e) => {
+    setSelectedCloset(e.target.value);
+  };
+
   return (
     <Container className="p-3">
+      {user?.closets.length > 1 && (
+        <select
+          className="form-select form-select-sm"
+          id="toolbar-closet-select"
+          onChange={handleSelectedClosetChange}
+        >
+          {user?.closets.map((c, i) => (
+            <option value={c.name} key={c._id || i}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      )}
       <Form.Control
         size="small"
         placeholder="Search Your Gear..."
@@ -44,8 +64,8 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
         onChange={(e) => setFilter(e.target.value)}
       />
       <ul className="list-unstyled px-3 py-1 my-1 searchResults">
-        {allGear?.length > 0 &&
-          allGear
+        {closetToFilter?.length > 0 &&
+          closetToFilter
             .filter((g) => g.name.toLowerCase().includes(filter))
             .map((g) => (
               <li className="result" key={g.id}>
