@@ -83,7 +83,6 @@ body{
   padding: 15px;
 }
 
-
 .toolbarButton{
   -moz-transition: all 300ms linear;
   -webkit-transition: all 300ms linear;
@@ -95,6 +94,11 @@ body{
   -moz-transform: rotate(90deg);
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
+}
+
+.toolbar-add-button:hover {
+  transform: scale(1.1);
+  background: #F1FAEE;
 }
 
 .searchResults {
