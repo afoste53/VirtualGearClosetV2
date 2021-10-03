@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../Utils/UserContext";
-import { Button, ButtonToolbar, Col, Container, Row } from "react-bootstrap";
 import ToolbarComponent from "../components/ToolbarComponent";
 import ToolbarButton from "../components/ToolbarButton";
 import MainScreenComponent from "../components/MainScreenComponent";
+import { Col } from "react-bootstrap";
+import instance from "../Utils/AxiosInstance";
 
 const HomeScreen = ({ history }) => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
   useEffect(() => {
     if (!user?.firstName) {
@@ -14,7 +15,8 @@ const HomeScreen = ({ history }) => {
     }
   }, [history, user]);
 
-  const [showToolBar, setShowToolbar] = useState(false);
+  const [showToolBar, setShowToolbar] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   return (
     <Col
@@ -22,8 +24,15 @@ const HomeScreen = ({ history }) => {
         showToolBar ? "homescreen toolbar-show" : "homescreen toolbar-hidden"
       }
     >
-      {showToolBar && <ToolbarComponent />}
-      <ToolbarButton setShow={setShowToolbar} show={showToolBar} />
+      {showToolBar && (
+        <ToolbarComponent loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      )}
+      <ToolbarButton
+        loggedIn={loggedIn}
+        setLoggedIn={setLoggedIn}
+        setShow={setShowToolbar}
+        show={showToolBar}
+      />
       <MainScreenComponent />
     </Col>
   );

@@ -12,7 +12,7 @@ import { UserContext } from "../Utils/UserContext.js";
 import instance from "../Utils/AxiosInstance";
 import { withRouter } from "react-router";
 
-const LoginSignUpScreen = ({ history }) => {
+const LoginSignUpScreen = ({ history, loggedIn, setLoggedIn }) => {
   const { user, setUser } = useContext(UserContext);
 
   const [hasAccount, setHasAccount] = useState(true);
@@ -27,6 +27,27 @@ const LoginSignUpScreen = ({ history }) => {
   const OGpasswordRef = useRef(null);
   const [showPasswordError, setShowPasswordError] = useState(false);
   const [showEmptyFieldsError, setShowEmptyFieldsError] = useState(false);
+
+  useEffect(async () => {
+    await fetchClosets();
+  }, [loggedIn]);
+
+  const fetchClosets = async () => {
+    console.log("first");
+    try {
+      let c = await instance.get(`/closets/owner/${user._id}`, {
+        headers: {
+          "Access-Control-Allow-Origin": "true",
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      console.log("2");
+      setUser({ ...user, closets: c });
+      console.log("3");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleInputChange = (e) => {
     switch (e.target.name) {
@@ -100,8 +121,10 @@ const LoginSignUpScreen = ({ history }) => {
 
       login(res);
     } catch (err) {
-      setShowPasswordError(true);
-      OGpasswordRef?.current?.focus();
+      if (err.response?.data) {
+        setShowPasswordError(true);
+        OGpasswordRef?.current?.focus();
+      }
     }
   };
 
@@ -115,6 +138,7 @@ const LoginSignUpScreen = ({ history }) => {
       token: response.data.token,
     });
     history.push("/");
+    setLoggedIn(true);
   };
 
   return (
