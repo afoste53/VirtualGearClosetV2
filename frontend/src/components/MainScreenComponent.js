@@ -2,7 +2,6 @@ const MainScreenComponent = (props) => {
   return (
     <div className="mainscreen">
       <div>hello main screen</div>
-      <button></button>
     </div>
   );
 };

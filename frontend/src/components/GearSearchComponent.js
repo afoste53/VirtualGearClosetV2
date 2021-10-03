@@ -8,9 +8,7 @@ const GearSearchComponent = () => {
 
   const [filter, setFilter] = useState("");
 
-  const handleItemChange = (e) => {
-    setUser();
-  };
+  const handleItemChange = (e) => {};
 
   return (
     <Container className="p-3">

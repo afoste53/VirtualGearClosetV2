@@ -17,8 +17,8 @@ const LoginSignUpScreen = ({ history }) => {
 
   const [hasAccount, setHasAccount] = useState(true);
 
-  const [first, setFirst] = useState("");
-  const [last, setLast] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,14 +26,15 @@ const LoginSignUpScreen = ({ history }) => {
   const passwordRef = useRef(null);
   const OGpasswordRef = useRef(null);
   const [showPasswordError, setShowPasswordError] = useState(false);
+  const [showEmptyFieldsError, setShowEmptyFieldsError] = useState(false);
 
   const handleInputChange = (e) => {
     switch (e.target.name) {
       case "first":
-        setFirst(e.target.value);
+        setFirstName(e.target.value);
         break;
       case "last":
-        setLast(e.target.value);
+        setLastName(e.target.value);
         break;
       case "email":
         setEmail(e.target.value);
@@ -50,20 +51,41 @@ const LoginSignUpScreen = ({ history }) => {
   };
 
   const handleClose = (e) => {
-    setFirst("");
-    setLast("");
+    setFirstName("");
+    setLastName("");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
     setShowPasswordError(false);
+    setShowEmptyFieldsError(false);
     setHasAccount(true);
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     if (password !== confirmPassword) {
       setShowPasswordError(true);
       passwordRef.current.focus();
       return;
+    } else if (!password || !firstName || !lastName || !email) {
+      setShowEmptyFieldsError(true);
+    } else {
+      const newUser = {
+        email,
+        firstName,
+        lastName,
+        password,
+      };
+
+      try {
+        let res = await instance.post("/users", newUser, {
+          headers: { "Access-Control-Allow-Origin": "true" },
+        });
+
+        login(res);
+      } catch (err) {
+        //handle error
+        console.error(err);
+      }
     }
   };
 
@@ -71,25 +93,28 @@ const LoginSignUpScreen = ({ history }) => {
     // call to backend with login details
     try {
       let res = await instance.post(
-        "/api/users/login",
+        "/users/login",
         { email, password },
         { headers: { "Access-Control-Allow-Origin": "true" } }
       );
-      setUser({
-        _id: res.data._id,
-        email: res.data.email,
-        firstName: res.data.firstName,
-        lastName: res.data.lastName,
-        closets: res.data.closets,
-        token: res.data.token,
-      });
 
-      // push to homepage
-      history.push("/");
+      login(res);
     } catch (err) {
       setShowPasswordError(true);
       OGpasswordRef?.current?.focus();
     }
+  };
+
+  const login = (response) => {
+    setUser({
+      _id: response.data._id,
+      email: response.data.email,
+      firstName: response.data.firstName,
+      lastName: response.data.lastName,
+      closets: response.data.closets,
+      token: response.data.token,
+    });
+    history.push("/");
   };
 
   return (
@@ -109,7 +134,7 @@ const LoginSignUpScreen = ({ history }) => {
                   name="first"
                   type="text"
                   placeholder="First Name"
-                  value={first}
+                  value={firstName}
                   onChange={handleInputChange}
                 />
               </Col>
@@ -118,7 +143,7 @@ const LoginSignUpScreen = ({ history }) => {
                   name="last"
                   type="text"
                   placeholder="Last Name"
-                  value={last}
+                  value={lastName}
                   onChange={handleInputChange}
                 />
               </Col>
@@ -154,6 +179,11 @@ const LoginSignUpScreen = ({ history }) => {
             {showPasswordError && (
               <Row className="mb-1 mx-2 text-danger text-bold">
                 <p className="has-text-danger">Passwords Must Match</p>
+              </Row>
+            )}
+            {showEmptyFieldsError && (
+              <Row className="mb-1 mx-2 text-danger text-bold">
+                <p className="has-text-danger">All fields are required</p>
               </Row>
             )}
             <Row className="mx-5">
