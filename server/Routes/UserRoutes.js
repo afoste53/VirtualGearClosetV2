@@ -5,7 +5,8 @@ import {
   deleteUser,
   getUserById,
   getAllUsers,
-  updateUser,
+  updateUserDetails,
+  changePassword,
 } from "../controllers/userController.js";
 import { authMiddleware } from "../Utils/authMiddleware.js";
 
@@ -16,7 +17,8 @@ router.route("/").get(getAllUsers).post(createUser);
 router
   .route("/:id")
   .get(authMiddleware, getUserById)
-  .put(authMiddleware, updateUser)
+  .put(authMiddleware, updateUserDetails)
   .delete(authMiddleware, deleteUser);
+router.put("/:id/password", authMiddleware, changePassword);
 
 export default router;

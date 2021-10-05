@@ -27,7 +27,20 @@ const userSchema = mongoose.Schema(
       select: false,
     },
     // array of ids in Closet document that owner owns
-    closets: [],
+    closets: [
+      {
+        id: String,
+        closetName: String,
+        specs: [String],
+        contents: [
+          {
+            gearName: String,
+            specs: [{}],
+            closets: [{}],
+          },
+        ],
+      },
+    ],
   },
   {
     timeStamps: true,

@@ -1,4 +1,4 @@
-import Gear from "../Models/GearModel.js";
+import Gear from "../Models/.GearModel.js";
 import asyncHandler from "express-async-handler";
 
 // @desc        Create a new piece of gear

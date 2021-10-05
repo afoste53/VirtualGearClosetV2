@@ -1,7 +1,7 @@
 import User from "../Models/UserModel.js";
-import Closet from "../Models/ClosetModel.js";
 import generateToken from "../Utils/generateToken.js";
 import asyncHandler from "express-async-handler";
+import { v4 as uuidv4 } from "uuid";
 
 // @desc        Auth Users and get token
 // @route       POST /api/users/login
@@ -28,6 +28,8 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
+// CREATE
+
 // @desc        Create a new user
 // @route       POST /api/users/
 const createUser = asyncHandler(async (req, res) => {
@@ -41,42 +43,40 @@ const createUser = asyncHandler(async (req, res) => {
       Error: "User already exists",
     });
   } else {
-    const user = await User.create({
-      firstName,
-      lastName,
-      email,
-      password,
-      closets: [],
-    });
-    if (user) {
-      const defaultCloset = await Closet.create({
-        name: "All Gear",
-        gear: [],
-        owner: user._id,
+    try {
+      const user = await User.create({
+        firstName,
+        lastName,
+        email,
+        password,
+        closets: [
+          {
+            closetName: "All Gear",
+            closet_id: new uuidv4(),
+            specs: [],
+            contents: [],
+          },
+        ],
       });
-
-      if (defaultCloset) {
-        user.closets.push(defaultCloset._id);
-        await user.save();
-
-        res.status(201).json({
-          Success: true,
-          _id: user._id,
-          firstName,
-          lastName,
-          email,
-          closets: user.closets,
-          token: generateToken(user._id),
-        });
-      } else {
-        res.status(400).json({
-          Success: false,
-          Error: "Invalid user data",
-        });
-      }
+      res.status(201).json({
+        Success: true,
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        closets: user.closets,
+        token: generateToken(user._id),
+      });
+    } catch (err) {
+      res.status(400).json({
+        Success: false,
+        Error: err,
+      });
     }
   }
 });
+
+// READ
 
 // @desc        Get user by id
 // @route       GET /api/users/:id
@@ -114,32 +114,92 @@ const getAllUsers = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc        Update user by id
-// @route       Put /api/users/:id
-const updateUser = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+/*
+* UPDATE
+*   updateName,
+*   updateEmail,
+*   updatePassword,
+*   updateCloset....
+*     CREATE:   addNewCloset
+*     READ:     getClosets -> no-op, it's embedded
+*     UPDATE:
+*               updateName,
+*               editSpecs
+*               addToCloset
+                deleteFromCloset,
+  *   DELETE    deleteCloset
+  *
+  *             createGear,
+  *             READ no-op -> it's embedded
+  *             edit name
+  *             editSpecs
+  *             addToCloset
+  *             removeFromCloset
+  *DELETE CLOSET
+*
+*
+* */
 
-  const user = await User.findOneAndUpdate(
-    { _id: req.params.id },
-    { firstName, lastName, email, password },
-    { new: true }
-  );
+// @desc    Update user details by ID
+// @route   PUT /api/:id
+const updateUserDetails = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
 
-  if (user) {
-    res.status(200).json({
+  // handle no user found
+  if (!user) {
+    res.status(404).json({
+      Success: false,
+      Error: `No user with id ${req.params.id}`,
+    });
+  }
+
+  const { firstName, lastName, email } = req.body;
+
+  user.firstName = firstName;
+  user.lastName = lastName;
+  user.email = email;
+
+  try {
+    await user.save();
+
+    res.status(203).json({
       Success: true,
       user,
     });
-  } else {
-    res.status(404).json({
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
       Success: false,
-      Error: `No user found with id ${req.params.id}`,
+      Error: err,
     });
   }
 });
 
+// @desc        Change Password
+// @route       PUT /api/users/:id/password
+const changePassword = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  // handle no user found
+  if (!user) {
+    res.status(404).json({
+      Success: false,
+      Error: `No user with id ${req.params.id}`,
+    });
+  }
+
+  // change password
+  user.password = req.body.password;
+  await user.save();
+
+  res.status(203).json({
+    Success: true,
+    Message: `Password changed for user with id ${user._id}`,
+  });
+});
+
 // @desc        Delete user by id
-// @route       Delete /api/users/:id
+// @route       DELETE /api/users/:id
 const deleteUser = asyncHandler(async (req, res) => {
   await User.findByIdAndDelete(req.params.id);
 
@@ -154,6 +214,7 @@ export {
   createUser,
   getUserById,
   getAllUsers,
-  updateUser,
+  updateUserDetails,
+  changePassword,
   deleteUser,
 };
