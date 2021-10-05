@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../Utils/UserContext";
 import { Container, Form } from "react-bootstrap";
-import "../App.css";
 import instance from "../Utils/AxiosInstance";
+import ResultComponent from "./ResultComponent";
 
 const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
   const { user, setUser } = useContext(UserContext);
@@ -10,9 +10,10 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
   const [filter, setFilter] = useState("");
 
   const [closet, setCloset] = useState([]);
-  const [closetToFilter, setClosetToFilter] = useState(<li>bananas</li>);
+  const [closetToFilter, setClosetToFilter] = useState();
 
   const [selectedCloset, setSelectedCloset] = useState("All Gear");
+  const [selectClosetId, setSelectClosetId] = useState(null);
 
   useEffect(async () => {
     await fetchClosets();
@@ -21,10 +22,16 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
   useEffect(() => {
     const c = user?.closets.filter((c) => c.name == selectedCloset)[0]?.gear;
     setClosetToFilter(c);
+
+    const cid = user?.closets
+      .filter((c) => c.name === selectedCloset)
+      .map((c) => c._id);
+    setSelectClosetId(cid);
   }, [closet, selectedCloset]);
 
   const fetchClosets = async () => {
     try {
+      if (!user?._id) return;
       let c = await instance.get(`/closets/owner/${user._id}`, {
         headers: {
           "Access-Control-Allow-Origin": "true",
@@ -33,9 +40,7 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
       });
       setUser({ ...user, closets: c.data.closets });
       setCloset(c.data.closets);
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) {}
   };
 
   const handleSelectedClosetChange = (e) => {
@@ -68,9 +73,12 @@ const GearSearchComponent = ({ loggedIn, setLoggedIn }) => {
           closetToFilter
             .filter((g) => g.name.toLowerCase().includes(filter))
             .map((g) => (
-              <li className="result" key={g.id}>
-                {g.name}
-              </li>
+              <ResultComponent
+                className="result"
+                key={g.id}
+                item={g}
+                closetId={selectClosetId}
+              />
             ))}
       </ul>
     </Container>

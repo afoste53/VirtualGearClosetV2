@@ -28,22 +28,23 @@ const LoginSignUpScreen = ({ history, loggedIn, setLoggedIn }) => {
   const [showPasswordError, setShowPasswordError] = useState(false);
   const [showEmptyFieldsError, setShowEmptyFieldsError] = useState(false);
 
-  useEffect(async () => {
-    await fetchClosets();
+  useEffect(() => {
+    async function asyncCall() {
+      await fetchClosets();
+    }
+    asyncCall();
   }, [loggedIn]);
 
   const fetchClosets = async () => {
-    console.log("first");
     try {
+      if (!user?._id) return;
       let c = await instance.get(`/closets/owner/${user._id}`, {
         headers: {
           "Access-Control-Allow-Origin": "true",
           Authorization: `Bearer ${user.token}`,
         },
       });
-      console.log("2");
       setUser({ ...user, closets: c });
-      console.log("3");
     } catch (err) {
       console.error(err);
     }
