@@ -54,9 +54,10 @@ const createUser = asyncHandler(async (req, res) => {
             closetName: "All Gear",
             closet_id: new uuidv4(),
             specs: [],
-            contents: [],
+            gearInCloset: [],
           },
         ],
+        gear: [],
       });
       res.status(201).json({
         Success: true,
@@ -65,6 +66,7 @@ const createUser = asyncHandler(async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         closets: user.closets,
+        gear: user.gear,
         token: generateToken(user._id),
       });
     } catch (err) {

@@ -18,7 +18,7 @@ const createCloset = asyncHandler(async (req, res) => {
   } else {
     const closet_id = new uuidv4();
 
-    const closet = { closetName, specs, contents: [], closet_id };
+    const closet = { closetName, specs, gearInCloset: [], closet_id };
 
     user.closets.push(closet);
     await user.save();
@@ -105,8 +105,9 @@ const updateClosetDetails = asyncHandler(async (req, res) => {
 const addToCloset = asyncHandler(async (req, res) => {
   const user = await verifyUserExists(req.params.id, res);
 
-  let closetIndex;
+  const gearToAdd = [...req.body.gearToAdd];
 
+  let closetIndex;
   for (let i = 0; i < user.closets.length; i++) {
     if (user.closets[i]._id == req.params.closetId) {
       closetIndex = i;
@@ -115,7 +116,7 @@ const addToCloset = asyncHandler(async (req, res) => {
   }
 
   // does closet exists?
-  if (!closetIndex) {
+  if (closetIndex < 0) {
     res.status(404).json({
       Success: false,
       Error: `No closet found for user ${user.firstName} with id ${req.params.closetId}`,
@@ -123,13 +124,18 @@ const addToCloset = asyncHandler(async (req, res) => {
   }
 
   // add reference to closet to each gear item's closet list
-  req.body.gearToAdd.forEach((g) => {
-    g.closets.push(req.params.closetId);
+  gearToAdd.forEach((g) => {
+    if (!g.closets.includes(req.params.closetId)) {
+      g.closets.push(req.params.closetId);
+    }
   });
 
-  req.body.gearToAdd.forEach((g) => {
-    user.closets[closetIndex].push(g);
+  gearToAdd.forEach((g) => {
+    user.closets[closetIndex].gearInCloset.push(g.gearId);
+    user.gear.push(g);
   });
+
+  await user.save();
 
   res.status(203).json({
     Success: true,
@@ -149,7 +155,7 @@ const deleteCloset = asyncHandler(async (req, res) => {
 
   const closet = user.closets.filter((c) => c._id == req.params.closetId);
 
-  const gear = closet.map((c) => c.contents);
+  const gear = closet.map((c) => c.gearInCloset);
 });
 
 export {

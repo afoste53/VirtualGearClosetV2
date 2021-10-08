@@ -32,15 +32,10 @@ const userSchema = mongoose.Schema(
         id: String,
         closetName: String,
         specs: [String],
-        contents: [
-          {
-            gearName: String,
-            specs: [{}],
-            closets: [{}],
-          },
-        ],
+        gearInCloset: [],
       },
     ],
+    gear: [{}],
   },
   {
     timeStamps: true,
