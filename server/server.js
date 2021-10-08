@@ -8,6 +8,7 @@ import cors from "cors";
 // Import routes
 import UserRoutes from "./Routes/UserRoutes.js";
 import ClosetRoutes from "./Routes/ClosetRoutes.js";
+import GearRoutes from "./Routes/GearRoutes.js";
 
 // configure dotenv to read variables from .env as per documentation
 dotenv.config();
@@ -37,6 +38,7 @@ app.use(cors());
 // Tell express to use routes
 app.use("/api/users", UserRoutes);
 app.use("/api/closets", ClosetRoutes);
+app.use("/api/gear", GearRoutes);
 
 // Sanitize variables
 app.use(

@@ -54,21 +54,34 @@ const updateClosetDetails = asyncHandler(async (req, res) => {
 
   const { closetName, specs } = req.body;
 
-  // make sure they aren't trying to create an issue with duplicated names
+  /* make sure they aren't trying to create an issue with closet naming rules
+   * 1) only default closet can be named all gear
+   * 2) cannot change name of default closet
+   *
+   *  incoming name = All Gear && incoming id points to all gear => good
+   *  incoming name = All Gear && incoming id !points to all gear => 'All Gear already exists' res
+   *
+   *  incoming name != All Gear && incoming id points to all gear => "can't change default closet name" res
+   *  incoming name != All Gear && incoming id !points to all gear => good
+   * */
+
+  let agId = user.closets
+    .filter((c) => c.closetName == "All Gear")
+    .map((c) => c._id)[0];
+
   if (closetName === "All Gear") {
-    if (req.params.closetId != user.closets[0]._id) {
+    if (req.params.closetId != agId) {
       res.status(400).json({
         Success: false,
-        Error: `Closet already exists with name \'${closetName}\' for user ${user.firstName}`,
+        Error: "Only the default closet can be named 'All Gear'",
       });
       return;
     }
   } else {
-    const names = user.closets.map((c) => c.closetName);
-    if (names.includes(closetName)) {
+    if (req.params.closetId == agId) {
       res.status(400).json({
         Success: false,
-        Error: `Closet already exists with name \'${closetName}\' for user ${user.firstName}`,
+        Error: "Cannot change the name of the default closet",
       });
       return;
     }
@@ -105,15 +118,71 @@ const updateClosetDetails = asyncHandler(async (req, res) => {
 
 // @desc          Add existing gear to existing closet
 // @route         PUT /api/closets/:id/add/:closetId
-const addToCloset = asyncHandler(async (updateType, update) => {});
+const addToCloset = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  // handle no user found
+  if (!user) {
+    res.status(404).json({
+      Success: false,
+      Error: `No user with id ${req.params.id}`,
+    });
+  }
+
+  let closetIndex;
+
+  for (let i = 0; i < user.closets.length; i++) {
+    if (user.closets[i]._id == req.params.closetId) {
+      closetIndex = i;
+      break;
+    }
+  }
+
+  // does closet exists?
+  if (!closetIndex) {
+    res.status(404).json({
+      Success: false,
+      Error: `No closet found for user ${user.firstName} with id ${req.params.closetId}`,
+    });
+  }
+
+  // add reference to closet to each gear item's closet list
+  req.body.gearToAdd.forEach((g) => {
+    g.closets.push(req.params.closetId);
+  });
+
+  req.body.gearToAdd.forEach((g) => {
+    user.closets[closetIndex].push(g);
+  });
+
+  res.status(203).json({
+    Success: true,
+    Message: `Gear successfully added to closet with closetId ${req.params.closetId}`,
+    user,
+  });
+});
 
 // @desc          Remove gear from closet (but don't delete gear -> unless in all gear
 // @route         PUT /api/closets/:id/remove/:closetId
 const removeFromCloset = asyncHandler(async (updateType, update) => {});
 
 // @desc        Delete a closet
-// @route        Delete /api/closet/:id/delete/:closetId
-const deleteCloset = asyncHandler(async (req, res) => {});
+// @route       DELETE /api/closet/:id/delete/:closetId
+const deleteCloset = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  // handle no user found
+  if (!user) {
+    res.status(404).json({
+      Success: false,
+      Error: `No user with id ${req.params.id}`,
+    });
+  }
+
+  const closet = user.closets.filter((c) => c._id == req.params.closetId);
+
+  const gear = closet.map((c) => c.contents);
+});
 
 export {
   createCloset,
