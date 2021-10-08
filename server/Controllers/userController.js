@@ -104,6 +104,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
   if (users) {
     res.status(200).json({
       Success: true,
+      "Number of Users": users.length,
       users,
     });
   } else {
@@ -143,15 +144,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @desc    Update user details by ID
 // @route   PUT /api/:id
 const updateUserDetails = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-
-  // handle no user found
-  if (!user) {
-    res.status(404).json({
-      Success: false,
-      Error: `No user with id ${req.params.id}`,
-    });
-  }
+  const user = await verifyUserExists(req.params.id, res);
 
   const { firstName, lastName, email } = req.body;
 
@@ -178,15 +171,7 @@ const updateUserDetails = asyncHandler(async (req, res) => {
 // @desc        Change Password
 // @route       PUT /api/users/:id/password
 const changePassword = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-
-  // handle no user found
-  if (!user) {
-    res.status(404).json({
-      Success: false,
-      Error: `No user with id ${req.params.id}`,
-    });
-  }
+  const user = await verifyUserExists(req.params.id, res);
 
   // change password
   user.password = req.body.password;
@@ -209,6 +194,28 @@ const deleteUser = asyncHandler(async (req, res) => {
   });
 });
 
+/** Returns whatever it finds that matches the id or
+ *  send a response complaining that givenId doesn't match
+ *  anything
+ *
+ *  @params req, res, next
+ */
+
+const verifyUserExists = asyncHandler(async (id, res) => {
+  const user = await User.findById(id);
+
+  // handle no user found
+  if (!user) {
+    res.status(404).json({
+      Success: false,
+      Error: `No user with id ${id}`,
+    });
+    return;
+  }
+
+  return user;
+});
+
 export {
   authUser,
   createUser,
@@ -217,4 +224,5 @@ export {
   updateUserDetails,
   changePassword,
   deleteUser,
+  verifyUserExists,
 };

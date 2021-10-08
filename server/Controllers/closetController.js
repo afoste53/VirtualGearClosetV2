@@ -1,19 +1,11 @@
 import asyncHandler from "express-async-handler";
-import User from "../Models/UserModel.js";
+import { verifyUserExists } from "./userController.js";
 import { v4 as uuidv4 } from "uuid";
 
 // @desc        Create a new closet
 // @route        POST /api/closet/:id
 const createCloset = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-
-  // handle no user found
-  if (!user) {
-    res.status(404).json({
-      Success: false,
-      Error: `No user with id ${req.params.id}`,
-    });
-  }
+  const user = await verifyUserExists(req.params.id, res);
 
   const { closetName, specs } = req.body;
 
@@ -42,15 +34,7 @@ const createCloset = asyncHandler(async (req, res) => {
 // @desc          Update closet details (ie. name or specs)
 // @route         PUT /api/closets/:id/update/:closetId
 const updateClosetDetails = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-
-  // handle no user found
-  if (!user) {
-    res.status(404).json({
-      Success: false,
-      Error: `No user with id ${req.params.id}`,
-    });
-  }
+  const user = await verifyUserExists(req.params.id, res);
 
   const { closetName, specs } = req.body;
 
@@ -119,15 +103,7 @@ const updateClosetDetails = asyncHandler(async (req, res) => {
 // @desc          Add existing gear to existing closet
 // @route         PUT /api/closets/:id/add/:closetId
 const addToCloset = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-
-  // handle no user found
-  if (!user) {
-    res.status(404).json({
-      Success: false,
-      Error: `No user with id ${req.params.id}`,
-    });
-  }
+  const user = await verifyUserExists(req.params.id, res);
 
   let closetIndex;
 
@@ -169,15 +145,7 @@ const removeFromCloset = asyncHandler(async (updateType, update) => {});
 // @desc        Delete a closet
 // @route       DELETE /api/closet/:id/delete/:closetId
 const deleteCloset = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-
-  // handle no user found
-  if (!user) {
-    res.status(404).json({
-      Success: false,
-      Error: `No user with id ${req.params.id}`,
-    });
-  }
+  const user = await verifyUserExists(req.params.id, res);
 
   const closet = user.closets.filter((c) => c._id == req.params.closetId);
 
