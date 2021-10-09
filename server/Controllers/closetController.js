@@ -105,9 +105,9 @@ const updateClosetDetails = asyncHandler(async (req, res) => {
 const addToCloset = asyncHandler(async (req, res) => {
   const user = await verifyUserExists(req.params.id, res);
 
-  const gearToAdd = [...req.body.gearToAdd];
+  const gearToAdd = req.body.gearToAdd;
 
-  let closetIndex;
+  let closetIndex = -1;
   for (let i = 0; i < user.closets.length; i++) {
     if (user.closets[i]._id == req.params.closetId) {
       closetIndex = i;
@@ -123,17 +123,14 @@ const addToCloset = asyncHandler(async (req, res) => {
     });
   }
 
-  // add reference to closet to each gear item's closet list
-  gearToAdd.forEach((g) => {
-    if (!g.closets.includes(req.params.closetId)) {
-      g.closets.push(req.params.closetId);
-    }
-  });
-
-  gearToAdd.forEach((g) => {
-    user.closets[closetIndex].gearInCloset.push(g.gearId);
-    user.gear.push(g);
-  });
+  // add the closetId for the closet we are adding to, to the closets array on gearToAdd
+  if (!gearToAdd.closets.includes(req.params.closetId)) {
+    gearToAdd.closets.push(req.params.closetId);
+  }
+  // add the gear id to the correct closets gearInCloset
+  user.closets[closetIndex].gearInCloset.push(gearToAdd.gearId);
+  // add actual object to the users gear array
+  user.gear.push(gearToAdd);
 
   await user.save();
 
@@ -146,7 +143,54 @@ const addToCloset = asyncHandler(async (req, res) => {
 
 // @desc          Remove gear from closet (but don't delete gear -> unless in all gear
 // @route         PUT /api/closets/:id/remove/:closetId
-const removeFromCloset = asyncHandler(async (updateType, update) => {});
+const removeFromCloset = asyncHandler(async (req, res) => {
+  const user = await verifyUserExists(req.params.id, res);
+
+  const gearToRemove = req.body.gearToRemove;
+
+  let closetIndex = -1;
+  for (let i = 0; i < user.closets.length; i++) {
+    if (user.closets[i]._id == req.params.closetId) {
+      closetIndex = i;
+      break;
+    }
+  }
+  // does closet exists?
+  if (closetIndex < 0) {
+    res.status(404).json({
+      Success: false,
+      Error: `No closet found for user ${user.firstName} with id ${req.params.closetId}`,
+    });
+    return;
+  }
+
+  //make sure closet actually contains the gearToRemove item
+  let closet = user.closets[closetIndex];
+  if (!closet.gearInCloset.includes(gearToRemove)) {
+    res.status(400).json({
+      Success: false,
+      Error: `Closet, ${closet.closetName} does not contain gear with id ${gearToRemove}`,
+    });
+    return;
+  }
+  // remove gid from closet
+  closet.gearInCloset = closet.gearInCloset.filter((g) => g !== gearToRemove);
+
+  // make sure gearToRemove .closet contains closetId
+  let gear = user.gear.filter((g) => g.gearId === gearToRemove)[0];
+  // remove closetId from gear.closet
+  if (!gear || !gear.closets.includes(req.params.closetId)) {
+    res.status(400).json({
+      Success: false,
+      Error: `Gear, ${gear.name} is not in the closet with closetId ${req.params.id}`,
+    });
+    return;
+  }
+  gear.closets = gear.closets.filter((c) => c !== req.params.closetId);
+
+  await user.save();
+  res.json(user);
+});
 
 // @desc        Delete a closet
 // @route       DELETE /api/closet/:id/delete/:closetId
