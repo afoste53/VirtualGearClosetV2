@@ -189,7 +189,7 @@ const removeFromCloset = asyncHandler(async (req, res) => {
   gear.closets = gear.closets.filter((c) => c !== req.params.closetId);
 
   await user.save();
-  res.json(user);
+  res.json({ Success: true, user });
 });
 
 // @desc        Delete a closet
@@ -197,9 +197,38 @@ const removeFromCloset = asyncHandler(async (req, res) => {
 const deleteCloset = asyncHandler(async (req, res) => {
   const user = await verifyUserExists(req.params.id, res);
 
-  const closet = user.closets.filter((c) => c._id == req.params.closetId);
+  if (
+    user.closets.find((c) => c.closetId === req.params.id).closetName ===
+    "All Gear"
+  ) {
+    res.status(400).json({
+      Success: false,
+      Error: "Cannot delete the default closet",
+    });
+    return;
+  }
 
-  const gear = closet.map((c) => c.gearInCloset);
+  const closet = user.closets.filter((c) => c.closetId == req.params.closetId);
+  // does closet exists?
+  if (!closet) {
+    res.status(404).json({
+      Success: false,
+      Error: `No closet found for user ${user.firstName} with id ${req.params.closetId}`,
+    });
+    return;
+  }
+
+  // for each gear in closet, remove the closetId from the gears closet array
+  closet.gearInCloset.forEach(
+    (g) => (g.closets = g.closets.filter((c) => c !== req.params.closetId))
+  );
+  user.closets = user.closets.filter((c) => c.closetId !== req.params.closetId);
+
+  await user.save();
+  res.status(203).json({
+    Success: true,
+    user,
+  });
 });
 
 export {
