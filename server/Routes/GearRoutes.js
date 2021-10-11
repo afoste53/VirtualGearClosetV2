@@ -1,14 +1,15 @@
-// import express from "express";
-// import { authMiddleware } from "../Utils/authMiddleware.js";
-// import {
-//   createGear,
-//   getGearByClosetId,
-//   getGearByOwner,
-// } from "../Controllers/.GearController.js";
-//
-// const router = express.Router();
-//
-// router.route("/").post(authMiddleware, createGear);
-// router.route("/user/:userid").get(authMiddleware, getGearByOwner);
-//
-// export default router;
+import express from "express";
+import {
+  createGear,
+  deleteGear,
+  editGearDetails,
+} from "../Controllers/gearController.js";
+import { authMiddleware } from "../Utils/authMiddleware.js";
+
+const router = express.Router();
+
+router.post("/:id", authMiddleware, createGear);
+router.delete("/:id/delete/:gearId", authMiddleware, deleteGear);
+router.put("/:id/update/:gearId", authMiddleware, editGearDetails);
+
+export default router;

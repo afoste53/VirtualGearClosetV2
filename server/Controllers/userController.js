@@ -1,7 +1,7 @@
 import User from "../Models/UserModel.js";
 import generateToken from "../Utils/generateToken.js";
 import asyncHandler from "express-async-handler";
-import { v4 as uuidv4 } from "uuid";
+import mongoose from "mongoose";
 
 // @desc        Auth Users and get token
 // @route       POST /api/users/login
@@ -52,7 +52,7 @@ const createUser = asyncHandler(async (req, res) => {
         closets: [
           {
             closetName: "All Gear",
-            closet_id: new uuidv4(),
+            closet_id: new mongoose.Types.ObjectId(),
             specs: [],
             gearInCloset: [],
           },

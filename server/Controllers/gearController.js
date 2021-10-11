@@ -1,95 +1,51 @@
-import Gear from "../Models/.GearModel.js";
+import mongoose from "mongoose";
 import asyncHandler from "express-async-handler";
+import { v4 as uuidv4 } from "uuid";
+import { verifyUserExists } from "./userController.js";
 
 // @desc        Create a new piece of gear
-// @route       POST /api/gear/
+// @route       POST /api/gear/:id/
 const createGear = asyncHandler(async (req, res) => {
-  const { name, weight, color, notes, cost, quantity, brand, owner, closets } =
-    req.body;
+  const user = await verifyUserExists(req.params.id, res);
 
-  const gear = await Gear.create({
-    name,
-    weight,
-    color,
-    notes,
-    cost,
-    quantity,
-    brand,
-    owner,
-    closets,
-  });
+  const { gearName, specs } = req.body;
 
-  if (gear) {
-    // get closets where owner === owner, and name === "All Gear"
-    const ownersCloset = await Closet.updateOne(
-      { owner: { $eq: owner }, name: { $eq: "All Gear" } },
-      {
-        $push: {
-          closets: { name, item: gear._id },
-        },
-      }
-    );
-
-    console.log(ownersCloset);
-
-    if (ownersCloset) {
-      res.status(201).json({
-        Success: true,
-        gear,
-      });
-    }
-  } else {
-    const error = "Invalid gear data";
-
+  const names = user.gear.map((g) => g.gearName);
+  if (names.includes(gearName)) {
     res.status(400).json({
       Success: false,
-      Error: error,
+      Error: `Gear already exists with name \'${gearName}\' for user ${user.firstName}`,
     });
-    throw new Error(error);
-  }
-});
+    return;
+  } else {
+    const gear_id = new mongoose.Types.ObjectId();
 
-// @desc        Get all gear in a given closet
-// @route       GET /api/gear/closet/:closetId
-const getGearByClosetId = asyncHandler(async (req, res) => {});
+    const allGearId = user.closets.find((c) => c.closetName == "All Gear")._id;
 
-// @desc        Get gear by user
-//              (get contents of closet "all gear" for user)
-// @route       GET /api/gear/user/:userId
-const getGearByOwner = asyncHandler(async (req, res) => {
-  const gearByOwner = Gear.find().where(owner).equals(req.params.userId);
+    const gear = { gearName, specs, gear_id, closets: [allGearId] };
 
-  if (gearByOwner) {
-    res.status(200).json({
+    user.closets
+      .find((c) => c.closetName === "All Gear")
+      .gearInCloset.push(gear_id);
+
+    user.gear.push(gear);
+
+    await user.save();
+
+    res.status(203).json({
       Success: true,
-      gearByOwner,
+      Message: `New gear, with name ${gearName}, added to user with id ${user._id}`,
+      user,
     });
-  } else {
-    const error = "Invalid user data provided";
-
-    res.status(400).json({
-      Success: false,
-      Error: error,
-    });
-    throw new Error(error);
   }
 });
 
-/**rs
-// @desc        Get gear by id
-// @route       GET /api/gear/:id
-const getGearByClosetId = asyncHandler(async (req, res) => {});
+// @desc        Delete a piece of gear
+// @route       DELETE /api/gear/:id/delete/:gearId
+const deleteGear = asyncHandler(async (req, res) => {});
 
-// @desc        Edit gear item details
-// @route       PUT /api/gear/:id
-const getGearByClosetId = asyncHandler(async (req, res) => {
-check for user
-});
+// @desc        Update a piece of gear
+// @route       PUT /api/gear/:id/update/:gearId
+const editGearDetails = asyncHandler(async (req, res) => {});
 
-// @desc        Delete gear
-// @route       DELETE /api/gear/:id
-const getGearByClosetId = asyncHandler(async (req, res) => {
-check for user
-});
-**/
-export { createGear, getGearByClosetId, getGearByOwner };
+export { createGear, deleteGear, editGearDetails };

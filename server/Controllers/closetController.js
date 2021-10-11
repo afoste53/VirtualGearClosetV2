@@ -1,6 +1,6 @@
+import mongoose from "mongoose";
 import asyncHandler from "express-async-handler";
 import { verifyUserExists } from "./userController.js";
-import { v4 as uuidv4 } from "uuid";
 
 // @desc        Create a new closet
 // @route        POST /api/closet/:id
@@ -16,7 +16,7 @@ const createCloset = asyncHandler(async (req, res) => {
       Error: `Closet already exists with name \'${closetName}\' for user ${user.firstName}`,
     });
   } else {
-    const closet_id = new uuidv4();
+    const closet_id = new mongoose.Types.ObjectId();
 
     const closet = { closetName, specs, gearInCloset: [], closet_id };
 
@@ -123,22 +123,38 @@ const addToCloset = asyncHandler(async (req, res) => {
     });
   }
 
-  // add the closetId for the closet we are adding to, to the closets array on gearToAdd
-  if (!gearToAdd.closets.includes(req.params.closetId)) {
-    gearToAdd.closets.push(req.params.closetId);
+  // make sure gearToRemove .closet contains closetId
+  let gear = user.gear.filter((g) => g.gear_id == gearToAdd)[0];
+
+  if (!gear) {
+    res.status(400).json({
+      Success: false,
+      Error: `Gear item with gear_id ${gearToAdd} does not exist`,
+    });
   }
-  // add the gear id to the correct closets gearInCloset
-  user.closets[closetIndex].gearInCloset.push(gearToAdd.gearId);
-  // add actual object to the users gear array
-  user.gear.push(gearToAdd);
 
-  await user.save();
+  // add the closetId for the closet we are adding to, to the closets array on gearToAdd
+  if (gear.closets.includes(req.params.closetId)) {
+    res.status(400).json({
+      Success: false,
+      Error: `${gearToAdd.gearName} is already in closet with closetId ${req.params.closetId}`,
+    });
+    return;
+  } else {
+    user.gear
+      .find((g) => g.gear_id == gearToAdd)
+      .closets.push(req.params.closetId);
+    // add the gear id to the correct closets gearInCloset
+    user.closets[closetIndex].gearInCloset.push(gearToAdd);
 
-  res.status(203).json({
-    Success: true,
-    Message: `Gear successfully added to closet with closetId ${req.params.closetId}`,
-    user,
-  });
+    await user.save();
+
+    res.status(203).json({
+      Success: true,
+      Message: `Gear successfully added to closet with closetId ${req.params.closetId}`,
+      user,
+    });
+  }
 });
 
 // @desc          Remove gear from closet (but don't delete gear -> unless in all gear
@@ -146,7 +162,7 @@ const addToCloset = asyncHandler(async (req, res) => {
 const removeFromCloset = asyncHandler(async (req, res) => {
   const user = await verifyUserExists(req.params.id, res);
 
-  const gearToRemove = req.body.gearToRemove;
+  const { gearToRemove } = req.body;
 
   let closetIndex = -1;
   for (let i = 0; i < user.closets.length; i++) {
@@ -169,23 +185,17 @@ const removeFromCloset = asyncHandler(async (req, res) => {
   if (!closet.gearInCloset.includes(gearToRemove)) {
     res.status(400).json({
       Success: false,
-      Error: `Closet, ${closet.closetName} does not contain gear with id ${gearToRemove}`,
+      Error: `Closet, ${closet.closetName}, does not contain gear with id ${gearToRemove}`,
     });
     return;
   }
   // remove gid from closet
-  closet.gearInCloset = closet.gearInCloset.filter((g) => g !== gearToRemove);
+  closet.gearInCloset = closet.gearInCloset.filter((g) => g != gearToRemove);
 
   // make sure gearToRemove .closet contains closetId
-  let gear = user.gear.filter((g) => g.gearId === gearToRemove)[0];
+  let gear = user.gear.filter((g) => g.gear_id == gearToRemove)[0];
+
   // remove closetId from gear.closet
-  if (!gear || !gear.closets.includes(req.params.closetId)) {
-    res.status(400).json({
-      Success: false,
-      Error: `Gear, ${gear.name} is not in the closet with closetId ${req.params.id}`,
-    });
-    return;
-  }
   gear.closets = gear.closets.filter((c) => c !== req.params.closetId);
 
   await user.save();
