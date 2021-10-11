@@ -80,6 +80,28 @@ const deleteGear = asyncHandler(async (req, res) => {
 
 // @desc        Update a piece of gear
 // @route       PUT /api/gear/:id/update/:gearId
-const editGearDetails = asyncHandler(async (req, res) => {});
+const editGearDetails = asyncHandler(async (req, res) => {
+  const user = await verifyUserExists(req.params.id, res);
+  const { newName, newSpecs } = req.body;
+
+  const t = user.gear.find((g) => g.gear_id == req.params.gearId);
+  if (!t) {
+    res.status(404).json({
+      Success: false,
+      Error: `No gear item found with id ${req.params.gearId} for ${user.firstName}`,
+    });
+    return;
+  }
+
+  t.gearName = newName;
+  t.specs = newSpecs;
+
+  await user.save();
+  res.status(203).json({
+    Success: true,
+    Message: `Gear with id ${req.params.gearId} successfully updated`,
+    user,
+  });
+});
 
 export { createGear, deleteGear, editGearDetails };
