@@ -29,26 +29,16 @@ const LoginSignUpScreen = ({ history, loggedIn, setLoggedIn }) => {
   const [showEmptyFieldsError, setShowEmptyFieldsError] = useState(false);
 
   useEffect(() => {
-    async function asyncCall() {
-      await fetchClosets();
+    const userFromLS = JSON.parse(window.localStorage.getItem("user"));
+    if (userFromLS) {
+      setUser(userFromLS);
+      history.push("/");
     }
-    asyncCall();
-  }, [loggedIn]);
+  }, []);
 
-  const fetchClosets = async () => {
-    try {
-      if (!user?._id) return;
-      let c = await instance.get(`/closets/owner/${user._id}`, {
-        headers: {
-          "Access-Control-Allow-Origin": "true",
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-      setUser({ ...user, closets: c });
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  useEffect(() => {
+    window.localStorage.setItem("user", JSON.stringify(user));
+  });
 
   const handleInputChange = (e) => {
     switch (e.target.name) {
@@ -139,7 +129,6 @@ const LoginSignUpScreen = ({ history, loggedIn, setLoggedIn }) => {
       token: response.data.token,
     });
     history.push("/");
-    setLoggedIn(true);
   };
 
   return (
